@@ -1,0 +1,23 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "babel-node": "babel-node",
+    "task1": "nodemon --exec npm run babel-node src/homeWork1/task1/task1",
+    "task2": "nodemon --exec npm run babel-node src/homeWork1/task2/task2"
+  },
+  "author": "Yurii Bobeshko",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.9",
+    "@babel/node": "^7.16.8",
+    "@babel/preset-env": "^7.16.11",
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "csvtojson": "^2.0.10"
+  }
+}
