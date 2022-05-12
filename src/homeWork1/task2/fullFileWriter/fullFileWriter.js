@@ -15,8 +15,7 @@ async function convertCSVToJson(data) {
 export default function fullFileWriter(csvFilePath, txtFilePath) {
     fs.readFile(csvFilePath, 'utf8', async (err, data) => {
         if (err) {
-            console.error(err)
-            return;
+            return console.error(err)
         }
         const text = await convertCSVToJson(data)
         writeText(JSON.stringify(text) + '\n', txtFilePath)
