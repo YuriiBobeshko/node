@@ -12,6 +12,8 @@ export const getUser = (id: string) => {
     }
   });
 
+  if (!currentUser) throw Error('user not found');
+
   return { user: currentUser, index };
 };
 
@@ -24,11 +26,11 @@ export const createUser = (user: Omit<User, 'id'>) => {
 export const upDateUser = (upDatedUser: User) => {
   const { user, index } = getUser(upDatedUser.id);
   if (user && index) listUser[index] = { ...user, ...upDatedUser };
-  return user.id;
+  return user?.id;
 };
 
 export const deleteUser = (id: string) => {
   const { user, index } = getUser(id);
   if (user && index) listUser[index] = { ...user, isDeleted: true };
-  return user.id;
+  return user?.id;
 };
