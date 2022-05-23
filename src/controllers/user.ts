@@ -34,3 +34,7 @@ export const deleteUser = (id: string) => {
   if (user && index) listUser[index] = { ...user, isDeleted: true };
   return user?.id;
 };
+
+export const filterUserByLogin = (text: string) => {
+  return listUser.filter(({ login }) => login.startsWith(text));
+};

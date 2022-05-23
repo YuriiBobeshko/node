@@ -1,18 +1,21 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import Router from './routes/user';
+import http from 'http';
+import UserRouter from './routes/user';
+import { getAutoSuggestUsers } from './webSocket/getAutoSuggestUsers';
 
 dotenv.config();
-
 const App = express();
-const port = 3000;
+export const server = http.createServer(App);
+
+const port = process.env.PORT || 3001;
 
 App.use(cors());
 App.use(express.json());
 
-App.use('/api/user', Router);
-
-App.listen(port, () => {
-  console.log(`Example app listening on port ${process.env.PORT || 3001}`);
+App.use('/api/user', UserRouter);
+getAutoSuggestUsers();
+server.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
 });

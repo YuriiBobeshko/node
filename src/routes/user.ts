@@ -1,5 +1,5 @@
-import express from 'express';
 import validatorJoi from 'express-joi-validation';
+import express from 'express';
 
 import { IGetUserAuthInfoRequest } from '../types/user';
 import { createUser, deleteUser, getUser, upDateUser } from '../controllers/user';
@@ -32,7 +32,6 @@ Router.put('/update', validator.body(upDateUserSchema), (req, res) => {
 });
 
 Router.delete('/delete/:id', validator.params(deleteUserSchema), (req, res) => {
-  console.log('delete', req.body);
   const id = deleteUser(req.params.id);
   const { user } = getUser(id);
 
