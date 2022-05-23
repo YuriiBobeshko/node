@@ -8,7 +8,8 @@ export const getAutoSuggestUsers = () => {
 
   wss.on('connection', (ws: WebSocket) => {
     ws.on('message', (message: string) => {
-      const data = filterUserByLogin(message);
+      const { text, limit = 5 } = JSON.parse(message);
+      const data = filterUserByLogin(text, limit);
       ws.send(JSON.stringify(data));
     });
   });

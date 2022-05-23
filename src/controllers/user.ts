@@ -35,6 +35,6 @@ export const deleteUser = (id: string) => {
   return user?.id;
 };
 
-export const filterUserByLogin = (text: string) => {
-  return listUser.filter(({ login }) => login.startsWith(text));
+export const filterUserByLogin = (text: string, limit: number) => {
+  return listUser.filter(({ login }) => login.startsWith(text)).slice(0, limit);
 };
