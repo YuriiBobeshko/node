@@ -6,16 +6,16 @@ import UserRouter from './routes/user';
 import { getAutoSuggestUsers } from './webSocket/getAutoSuggestUsers';
 
 dotenv.config();
-const App = express();
-export const server = http.createServer(App);
+const app = express();
+export const server = http.createServer(app);
 
 const port = process.env.PORT || 3001;
 
-App.use(cors());
-App.use(express.json());
+app.use(cors());
+app.use(express.json());
 
-App.use('/api/user', UserRouter);
-getAutoSuggestUsers();
+app.use('/api/user', UserRouter);
+getAutoSuggestUsers(server);
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
