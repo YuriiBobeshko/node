@@ -10,89 +10,30 @@ import { Repository } from 'typeorm';
 export class UsersService extends BaseService<User, NewUser> {
   constructor(@InjectRepository(UsersEntity) usersRepository: Repository<UsersEntity>) {
     super(usersRepository);
-    // console.log(UsersRepository);
   }
 
-  private usersList: ListUser = [
-    {
-      id: '0',
-      login: 'Yura',
-      password: '12345678',
-      age: 23,
-      isDeleted: false,
-    },
-  ];
-
   getAll() {
-    console.log(this.usersRepository.find());
-
-    return this.usersList;
+    return this.usersRepository.find();
   }
 
   getById(id: ID) {
-    return this.usersList.find(({ id: userId }) => String(userId) === String(id));
+    return this.usersRepository.findOneBy({ id });
   }
 
   create(newUser: NewUser) {
-    const newUserData: User = {
-      ...newUser,
-      id: this.usersList.length,
-      isDeleted: false,
-    };
-
-    this.usersList.push(newUserData);
-
-    return newUserData;
+    return this.usersRepository.save({ ...newUser });
   }
 
   update(id: ID, newData: NewUser) {
-    const userData = this.getById(id);
-
-    if (!userData) {
-      return undefined;
-    }
-
-    const updatedUser: User = {
-      ...userData,
-      ...newData,
-      isDeleted: false,
-    };
-
-    this.usersList = this.usersList.map((user) => {
-      if (user.id === id) {
-        return updatedUser;
-      }
-
-      return user;
-    });
-
-    return updatedUser;
+    return this.usersRepository.update({ id }, newData);
   }
 
   archive(id: ID) {
-    const userData = this.getById(id);
-
-    if (!userData) {
-      return undefined;
-    }
-
-    this.usersList = this.usersList.map((user) => {
-      if (user.id === id) {
-        return {
-          ...user,
-          isDeleted: true,
-        };
-      }
-
-      return user;
-    });
-
-    return this.usersList;
+    return this.usersRepository.update({ id }, { isDeleted: true });
   }
 
   delete(id: ID) {
-    this.usersList = this.usersList.filter(({ id: userId }) => userId !== id);
-    return this.usersList;
+    return this.usersRepository.delete({ id });
   }
 
   getAutoSuggestUsers(query: string, limit?: number): ListUser {

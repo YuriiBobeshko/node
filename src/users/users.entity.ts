@@ -8,6 +8,12 @@ export class UsersEntity {
   @Column()
   login: string;
 
-  @Column({ default: false })
+  @Column()
+  password: string;
+
+  @Column()
+  age: number;
+
+  @Column({ default: true })
   isDeleted: boolean;
 }
