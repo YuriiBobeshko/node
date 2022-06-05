@@ -1,6 +1,12 @@
 import { ID } from './base';
 
 export abstract class BaseService<T, R = T> {
+  protected usersRepository: any;
+
+  constructor(usersRepository) {
+    this.usersRepository = usersRepository;
+  }
+
   abstract getAll(): T[];
 
   abstract getById(id: ID): T | undefined;

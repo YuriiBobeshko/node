@@ -2,9 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { User, ListUser, NewUser } from '../types/users';
 import { BaseService } from '../types/BaseService';
 import { ID } from '../types/base';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UsersEntity } from './users.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService extends BaseService<User, NewUser> {
+  constructor(@InjectRepository(UsersEntity) usersRepository: Repository<UsersEntity>) {
+    super(usersRepository);
+    // console.log(UsersRepository);
+  }
+
   private usersList: ListUser = [
     {
       id: '0',
@@ -16,6 +24,8 @@ export class UsersService extends BaseService<User, NewUser> {
   ];
 
   getAll() {
+    console.log(this.usersRepository.find());
+
     return this.usersList;
   }
 
