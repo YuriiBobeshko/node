@@ -2,24 +2,11 @@ import { Module } from '@nestjs/common';
 
 import { UsersModule } from './users/users.module';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Users } from './users/users.model';
+import { SeederModule } from './seeds/seeder.module';
+import { dbConfig } from './config/db';
 
 @Module({
-  imports: [
-    SequelizeModule.forRoot({
-      host: 'localhost',
-      port: 6000,
-      username: 'postgres',
-      password: 'idazov',
-      database: 'nodeJs',
-      dialect: 'postgres',
-      models: [Users],
-      logging: console.log,
-      synchronize: true,
-      autoLoadModels: true,
-    }),
-    UsersModule,
-  ],
+  imports: [SequelizeModule.forRoot(dbConfig), UsersModule, SeederModule],
   controllers: [],
   providers: [],
 })
