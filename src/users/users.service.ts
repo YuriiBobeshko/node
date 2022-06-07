@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common";
-import { NewUser } from "../types/users";
-import { ID } from "../types/base";
-import { InjectModel } from "@nestjs/sequelize";
-import { Users } from "./users.model";
+import { Injectable } from '@nestjs/common';
+import { NewUser } from '../types/users';
+import { ID } from '../types/base';
+import { InjectModel } from '@nestjs/sequelize';
+import { Users } from './users.model';
 
 @Injectable()
 export class UsersService {
@@ -51,6 +51,6 @@ export class UsersService {
   }
 
   getAutoSuggestUsers(query: string, limit?: number) {
-    return this.getAll();
+    return this.getAll().slice(0, limit);
   }
 }

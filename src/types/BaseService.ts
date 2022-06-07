@@ -1,4 +1,4 @@
-import { ID } from "./base";
+import { ID } from './base';
 
 export abstract class BaseService<T, R = T> {
   protected usersRepository: any;
