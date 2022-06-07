@@ -1,4 +1,4 @@
-import { ID } from './base';
+import { ID } from "./base";
 
 export type User = {
   readonly id: ID;

@@ -1,44 +1,56 @@
-import { Injectable } from '@nestjs/common';
-import { User, ListUser, NewUser } from '../types/users';
-import { BaseService } from '../types/BaseService';
-import { ID } from '../types/base';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UsersEntity } from './users.entity';
-import { Repository } from 'typeorm';
+import { Injectable } from "@nestjs/common";
+import { NewUser } from "../types/users";
+import { ID } from "../types/base";
+import { InjectModel } from "@nestjs/sequelize";
+import { Users } from "./users.model";
 
 @Injectable()
-export class UsersService extends BaseService<User, NewUser> {
-  constructor(@InjectRepository(UsersEntity) usersRepository: Repository<UsersEntity>) {
-    super(usersRepository);
-  }
+export class UsersService {
+  constructor(
+    @InjectModel(Users)
+    private readonly usersRepository: any,
+  ) {}
 
   getAll() {
-    return this.usersRepository.find();
+    return this.usersRepository.findAll();
   }
 
   getById(id: ID) {
-    return this.usersRepository.findOneBy({ id });
+    return this.usersRepository.findByPk(id);
   }
 
   create(newUser: NewUser) {
-    return this.usersRepository.save({ ...newUser });
+    return this.usersRepository.create(newUser);
   }
 
   update(id: ID, newData: NewUser) {
-    return this.usersRepository.update({ id }, newData);
+    return this.usersRepository.update(newData, {
+      where: {
+        id,
+      },
+    });
   }
 
   archive(id: ID) {
-    return this.usersRepository.update({ id }, { isDeleted: true });
+    return this.usersRepository.update(
+      { isDeleted: true },
+      {
+        where: {
+          id,
+        },
+      },
+    );
   }
 
   delete(id: ID) {
-    return this.usersRepository.delete({ id });
+    return this.usersRepository.destroy({
+      where: {
+        id,
+      },
+    });
   }
 
-  getAutoSuggestUsers(query: string, limit?: number): ListUser {
-    return this.getAll()
-      .filter(({ login }) => login.toLowerCase().includes(query.toLowerCase()))
-      .slice(0, limit);
+  getAutoSuggestUsers(query: string, limit?: number) {
+    return this.getAll();
   }
 }
