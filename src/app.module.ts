@@ -4,6 +4,7 @@ import { UsersModule } from './users/users.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { SeederModule } from './seeds/seeder.module';
 import { dbConfig } from './config/db';
+import { UsersGateway } from './users/users.gateway';
 
 @Module({
   imports: [SequelizeModule.forRoot(dbConfig), UsersModule, SeederModule],
