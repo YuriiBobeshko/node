@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 export default {
   type: 'postgres',
   host: 'localhost',
@@ -6,8 +8,8 @@ export default {
   driver: 'postgres',
   password: 'idazov',
   database: 'nodeJs',
-  entities: [__dirname + 'src/**/*.entity.{ts,js}'],
-  migrations: [__dirname + 'src/**/*.migration.{ts,js}'],
+  entities: [path.join(__dirname, 'src/**/*.entity.{ts,js}')],
+  migrations: [path.join(__dirname, 'src/**/*.migration.{ts,js}')],
   synchronize: true,
   autoLoadEntities: true,
   logging: true,
