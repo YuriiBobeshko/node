@@ -3,6 +3,7 @@ import { NewUser } from '../types/users';
 import { ID } from '../types/base';
 import { InjectModel } from '@nestjs/sequelize';
 import { Users } from './users.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class UsersService {
@@ -51,6 +52,10 @@ export class UsersService {
   }
 
   getAutoSuggestUsers(query: string, limit?: number) {
-    return this.getAll().slice(0, limit);
+    return this.usersRepository.findAll({
+      where: {
+        login: { [Op.like]: `%${query}%` },
+      },
+    });
   }
 }

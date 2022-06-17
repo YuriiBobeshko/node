@@ -9,7 +9,7 @@ export class SeederRepository {
     private readonly userModel: typeof Users,
   ) {}
 
-  checkDataUsers(id: number): Promise<boolean> {
+  isUserDataExist(id: number): Promise<boolean> {
     return this.userModel
       .findOne({
         where: { id },

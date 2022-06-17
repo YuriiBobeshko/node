@@ -8,7 +8,7 @@ export class SeederService {
 
   async startSeedsUsers(): Promise<void> {
     try {
-      const checkUsers = await this.seederRepository.checkDataUsers(usersData[0].id);
+      const checkUsers = await this.seederRepository.isUserDataExist(usersData[0].id);
       if (!checkUsers) {
         await this.seederRepository.createUsers(usersData);
       } else {

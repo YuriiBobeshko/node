@@ -1,6 +1,4 @@
 import {
-  ConnectedSocket,
-  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
@@ -8,71 +6,32 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
+import { UsersService } from './users.service';
 
-// @WebSocketGateway({
-//   cors: {
-//     origin: '*',
-//   },
-//   path: '/UsersGateway',
-// })
-// export class UsersGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-//   @WebSocketServer() server: Server;
-//   private logger: Logger = new Logger('AppGateway');
-//
-//   @SubscribeMessage('msgToServer')
-//   handleMessage(client: Socket, payload: string): void {
-//     console.log(54646);
-//
-//     this.server.emit('msgToClient', payload);
-//   }
-//
-//   afterInit(server: Server) {
-//     console.log(54646);
-//     this.logger.log('Init');
-//   }
-//
-//   handleDisconnect(client: Socket) {
-//     this.logger.log(`Client disconnected: ${client.id}`);
-//   }
-//
-//   handleConnection(client: Socket, ...args: any[]) {
-//     this.logger.log(`Client connected: ${client.id}`);
-//   }
-// }
-
-@WebSocketGateway({
-  cors: {
-    origin: '*',
-  },
-  path: '/',
-  // transport: ['websocket'],
-})
-export class UsersGateway {
+@WebSocketGateway({ cors: '*' })
+export class UsersGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  private readonly server;
+  private readonly server: Server;
 
-  @SubscribeMessage('connect')
-  handleInit(@MessageBody() message: string): void {
-    console.log(111, message);
-    this.server.emit('message', message);
+  constructor(private readonly usersService: UsersService) {}
+
+  @SubscribeMessage('msgToServer')
+  async handleMessage(client: Socket, payload: string): Promise<void> {
+    const res = await this.usersService.getAutoSuggestUsers(payload, 10);
+
+    this.server.emit('msgToClient', JSON.stringify(res));
   }
 
-  @SubscribeMessage('message')
-  handleMessage(@MessageBody() message: string): void {
-    console.log(111, message);
-    this.server.emit('message', message);
+  afterInit(server: Server) {
+    console.info('Init');
   }
 
-  @SubscribeMessage('event')
-  onEvent(@MessageBody() message: string): void {
-    console.log(111, message);
-    this.server.emit('message', message);
+  handleDisconnect(client: Socket) {
+    console.info(`Client disconnected: ${client.id}`);
   }
 
-  @SubscribeMessage('event')
-  handleError(...rest): void {
-    console.log(rest);
-    // this.server.emit('message', message);
+  handleConnection(client: Socket, ...args: any[]) {
+    console.info(`Client connected: ${client.id}`);
   }
 }
