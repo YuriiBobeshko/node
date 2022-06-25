@@ -16,24 +16,16 @@ export class SeederRepository {
     private readonly usersGroupModel: typeof UsersGroups,
   ) {}
 
-  isUserDataExist(id: number): Promise<boolean> {
-    return this.userModel
-      .findOne({
-        where: { id },
-      })
-      .then((res) => res !== null);
+  async isUserDataExist(): Promise<boolean> {
+    return !!(await this.userModel.count());
   }
 
   createUsers(users: NewUser[]): Promise<Users[]> {
     return this.userModel.bulkCreate(users);
   }
 
-  isGroupsDataExist(id: number): Promise<boolean> {
-    return this.groupModel
-      .findOne({
-        where: { id },
-      })
-      .then((res) => res !== null);
+  async isGroupsDataExist(): Promise<boolean> {
+    return !!(await this.groupModel.count());
   }
 
   createGroups(groups: NewGroupSeed[]): Promise<Groups[]> {
@@ -41,28 +33,11 @@ export class SeederRepository {
     return this.groupModel.bulkCreate(groups);
   }
 
-  async isUsersGroupsDataExist() {
-    return await this.usersGroupModel.count();
+  async isUsersGroupsDataExist(): Promise<boolean> {
+    return !!(await this.usersGroupModel.count());
   }
 
-  connectUsersGroups(): Promise<UsersGroups[]> {
-    return this.usersGroupModel.bulkCreate([
-      {
-        userId: 11,
-        groupId: 1,
-      },
-      {
-        userId: 12,
-        groupId: 1,
-      },
-      {
-        userId: 13,
-        groupId: 1,
-      },
-      {
-        userId: 14,
-        groupId: 2,
-      },
-    ]);
+  connectUsersGroups(usersGroupData): Promise<UsersGroups[]> {
+    return this.usersGroupModel.bulkCreate(usersGroupData);
   }
 }

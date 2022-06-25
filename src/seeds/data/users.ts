@@ -1,24 +1,24 @@
 export const usersData = [
   {
-    id: 11,
+    id: 1,
     login: 'Yura',
     password: '12345678',
     age: 23,
   },
   {
-    id: 12,
+    id: 2,
     login: 'Yura1',
     password: '12345678',
-    age: 23,
+    age: 3,
   },
   {
-    id: 13,
+    id: 4,
     login: 'Yura12',
     password: '12345678',
-    age: 23,
+    age: 5,
   },
   {
-    id: 14,
+    id: 6,
     login: 'Dima',
     password: '12345678',
     age: 23,
