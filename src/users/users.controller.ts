@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { AddUserGroupDto } from './dto/add-user-group.dto';
 
 @Controller('api/users')
 export class UsersController {
@@ -26,6 +27,11 @@ export class UsersController {
   @Put(':id')
   update(@Body() updateUserDto: UpdateUserDto, @Param('id') id) {
     return this.usersService.update(id, updateUserDto);
+  }
+
+  @Post('/addUsersToGroup')
+  addUsersToGroup(@Body() addUserGroupDto: AddUserGroupDto) {
+    return this.usersService.addUsersToGroup(addUserGroupDto.groupId, addUserGroupDto.userIds);
   }
 
   @Patch(':id')
