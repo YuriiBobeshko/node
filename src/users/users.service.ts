@@ -4,12 +4,16 @@ import { ID } from '../types/base';
 import { InjectModel } from '@nestjs/sequelize';
 import { Users } from './users.model';
 import { Op } from 'sequelize';
+import { UsersGroups } from 'src/users-groups/users-groups.model';
+import { Repository } from 'sequelize-typescript';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(Users)
-    private readonly usersRepository: any,
+    private readonly usersRepository: Repository<Users>,
+    @InjectModel(UsersGroups)
+    private readonly usersGroupsRepository: Repository<UsersGroups>, // @Inject('SequelizeInstance') // private readonly sequelizeInstance,
   ) {}
 
   getAll() {
@@ -32,6 +36,24 @@ export class UsersService {
     });
   }
 
+  async addUsersToGroup(groupId: ID, userIds: ID[]) {
+    // const t = await this.sequelizeInstance.transaction();
+    let result;
+    try {
+      result = await this.usersGroupsRepository.bulkCreate(
+        userIds.map((userId) => ({
+          userId,
+          groupId,
+        })),
+        // { transaction: t },
+      );
+      // await t.commit();
+    } catch (error) {
+      // await t.rollback();
+    }
+    return result;
+  }
+
   archive(id: ID) {
     return this.usersRepository.update(
       { isDeleted: true },
@@ -51,11 +73,13 @@ export class UsersService {
     });
   }
 
-  getAutoSuggestUsers(query: string, limit?: number) {
-    return this.usersRepository.findAll({
-      where: {
-        login: { [Op.like]: `%${query}%` },
-      },
-    });
+  async getAutoSuggestUsers(query: string, limit = 10) {
+    return (
+      await this.usersRepository.findAll({
+        where: {
+          login: { [Op.like]: `%${query}%` },
+        },
+      })
+    ).slice(0, limit);
   }
 }

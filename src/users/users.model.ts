@@ -1,4 +1,6 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { BelongsToMany, Column, DataType, Model, Table } from 'sequelize-typescript';
+import { UsersGroups } from '../users-groups/users-groups.model';
+import { Groups } from '../groups/groups.model';
 
 @Table
 export class Users extends Model {
@@ -26,4 +28,7 @@ export class Users extends Model {
     defaultValue: false,
   })
   isDeleted: boolean;
+
+  @BelongsToMany(() => Groups, () => UsersGroups)
+  groups: Groups[];
 }
