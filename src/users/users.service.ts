@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Catch, HttpException, HttpStatus, Injectable, UseFilters } from '@nestjs/common';
 import { NewUser } from '../types/users';
 import { ID } from '../types/base';
 import { InjectModel } from '@nestjs/sequelize';
@@ -13,18 +13,25 @@ export class UsersService {
     @InjectModel(Users)
     private readonly usersRepository: Repository<Users>,
     @InjectModel(UsersGroups)
-    private readonly usersGroupsRepository: Repository<UsersGroups>, // @Inject('SequelizeInstance') // private readonly sequelizeInstance,
+    private readonly usersGroupsRepository: Repository<UsersGroups>,
   ) {}
 
   getAll() {
     return this.usersRepository.findAll();
   }
 
-  getById(id: ID) {
-    return this.usersRepository.findByPk(id);
+  async getById(id: ID) {
+    const user = await this.usersRepository.findByPk(id);
+    if (!user) throw new HttpException('This login already uses', HttpStatus.BAD_REQUEST);
+
+    return user;
   }
 
-  create(newUser: NewUser) {
+  async create(newUser: NewUser) {
+    if (await Users.isLoginUniq(this.usersRepository, newUser.login)) {
+      throw new HttpException('This login already uses', HttpStatus.BAD_REQUEST);
+    }
+
     return this.usersRepository.create(newUser);
   }
 
