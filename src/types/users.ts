@@ -9,5 +9,3 @@ export type User = {
 };
 
 export type NewUser = Omit<User, 'id' | 'isDeleted'>;
-
-export type ListUser = User[];

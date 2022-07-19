@@ -18,7 +18,7 @@ export const usersData = [
     age: 5,
   },
   {
-    id: 6,
+    id: 5,
     login: 'Dima',
     password: '12345678',
     age: 23,

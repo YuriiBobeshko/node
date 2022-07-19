@@ -1,4 +1,4 @@
-import { BelongsToMany, Column, DataType, Model, Table } from 'sequelize-typescript';
+import { BelongsToMany, Column, DataType, Model, Repository, Table } from 'sequelize-typescript';
 import { UsersGroups } from '../users-groups/users-groups.model';
 import { Groups } from '../groups/groups.model';
 
@@ -31,4 +31,12 @@ export class Users extends Model {
 
   @BelongsToMany(() => Groups, () => UsersGroups)
   groups: Groups[];
+
+  static async isLoginUniq(usersRepository: Repository<Users>, login: string): Promise<boolean> {
+    return !usersRepository.findOne({
+      where: {
+        login,
+      },
+    });
+  }
 }
