@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Catch, HttpException, HttpStatus, Injectable, UseFilters } from '@nestjs/common';
 import { NewUser } from '../types/users';
 import { ID } from '../types/base';
 import { InjectModel } from '@nestjs/sequelize';
@@ -13,18 +13,25 @@ export class UsersService {
     @InjectModel(Users)
     private readonly usersRepository: Repository<Users>,
     @InjectModel(UsersGroups)
-    private readonly usersGroupsRepository: Repository<UsersGroups>, // @Inject('SequelizeInstance') // private readonly sequelizeInstance,
+    private readonly usersGroupsRepository: Repository<UsersGroups>,
   ) {}
 
   getAll() {
     return this.usersRepository.findAll();
   }
 
-  getById(id: ID) {
-    return this.usersRepository.findByPk(id);
+  async getById(id: ID) {
+    const user = await this.usersRepository.findByPk(id);
+    if (!user) throw new Error('This user already uses');
+
+    return user;
   }
 
-  create(newUser: NewUser) {
+  async create(newUser: NewUser) {
+    if (await this.isLoginUniq(newUser.login)) {
+      throw new Error('This login already uses');
+    }
+
     return this.usersRepository.create(newUser);
   }
 
@@ -49,13 +56,14 @@ export class UsersService {
       );
       // await t.commit();
     } catch (error) {
+      throw Error(error);
       // await t.rollback();
     }
     return result;
   }
 
   archive(id: ID) {
-    return this.usersRepository.update(
+    const res = this.usersRepository.update(
       { isDeleted: true },
       {
         where: {
@@ -63,14 +71,18 @@ export class UsersService {
         },
       },
     );
+    if (!res) throw Error('Unsuccessful archiving');
+    return res;
   }
 
-  delete(id: ID) {
-    return this.usersRepository.destroy({
+  async delete(id: ID) {
+    const res = await this.usersRepository.destroy({
       where: {
         id,
       },
     });
+    if (!res) throw Error('Nothing to delete');
+    return res;
   }
 
   async getAutoSuggestUsers(query: string, limit = 10) {
@@ -81,5 +93,13 @@ export class UsersService {
         },
       })
     ).slice(0, limit);
+  }
+
+  async isLoginUniq(login: string): Promise<boolean> {
+    return !this.usersRepository.findOne({
+      where: {
+        login,
+      },
+    });
   }
 }
