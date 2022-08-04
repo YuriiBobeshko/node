@@ -22,14 +22,14 @@ export class UsersService {
 
   async getById(id: ID) {
     const user = await this.usersRepository.findByPk(id);
-    if (!user) throw new HttpException('This login already uses', HttpStatus.BAD_REQUEST);
+    if (!user) throw new Error('This user already uses');
 
     return user;
   }
 
   async create(newUser: NewUser) {
-    if (await Users.isLoginUniq(this.usersRepository, newUser.login)) {
-      throw new HttpException('This login already uses', HttpStatus.BAD_REQUEST);
+    if (await this.isLoginUniq(newUser.login)) {
+      throw new Error('This login already uses');
     }
 
     return this.usersRepository.create(newUser);
@@ -56,13 +56,14 @@ export class UsersService {
       );
       // await t.commit();
     } catch (error) {
+      throw Error(error);
       // await t.rollback();
     }
     return result;
   }
 
   archive(id: ID) {
-    return this.usersRepository.update(
+    const res = this.usersRepository.update(
       { isDeleted: true },
       {
         where: {
@@ -70,14 +71,18 @@ export class UsersService {
         },
       },
     );
+    if (!res) throw Error('Unsuccessful archiving');
+    return res;
   }
 
-  delete(id: ID) {
-    return this.usersRepository.destroy({
+  async delete(id: ID) {
+    const res = await this.usersRepository.destroy({
       where: {
         id,
       },
     });
+    if (!res) throw Error('Nothing to delete');
+    return res;
   }
 
   async getAutoSuggestUsers(query: string, limit = 10) {
@@ -88,5 +93,13 @@ export class UsersService {
         },
       })
     ).slice(0, limit);
+  }
+
+  async isLoginUniq(login: string): Promise<boolean> {
+    return !this.usersRepository.findOne({
+      where: {
+        login,
+      },
+    });
   }
 }

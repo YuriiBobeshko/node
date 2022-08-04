@@ -1,27 +1,31 @@
-import { ExceptionFilter, Catch, ArgumentsHost, Logger, HttpException, HttpStatus } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, Logger, HttpException } from '@nestjs/common';
+
+const ERRORS = {
+  DATA_BASE_ERROR: 'DATA_BASE_ERROR',
+};
 
 @Catch()
 export class ErrorFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
+  catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-    const status = exception.getStatus ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
     const errorResponse = {
-      code: status,
+      code: ERRORS.DATA_BASE_ERROR,
       timestamp: new Date().toLocaleDateString(),
       path: request.url,
       method: request.method,
       message: exception.message || 'Internal server error',
     };
 
-    if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
-      Logger.error(`${request.method} ${request.url}`, exception.stack, 'ExceptionFilter');
-    } else {
+    if (exception instanceof HttpException) {
+      errorResponse.code = exception.getStatus() + '';
       Logger.error(`${request.method} ${request.url}`, JSON.stringify(errorResponse), 'ExceptionFilter');
+    } else {
+      Logger.error(`${request.method} ${request.url}`, exception.stack, 'ExceptionFilterDB');
     }
 
-    response.status(status).json({});
+    response.json(errorResponse);
   }
 }

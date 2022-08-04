@@ -31,12 +31,4 @@ export class Users extends Model {
 
   @BelongsToMany(() => Groups, () => UsersGroups)
   groups: Groups[];
-
-  static async isLoginUniq(usersRepository: Repository<Users>, login: string): Promise<boolean> {
-    return !usersRepository.findOne({
-      where: {
-        login,
-      },
-    });
-  }
 }
